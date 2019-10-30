@@ -1,10 +1,11 @@
 package com.example.curso.entities;
 
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,44 +14,34 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "tb_user")
-public class User implements UserDetails {
+@Table(name = "tb_comment")
+public class Comment implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
-	
-	@Column(unique = true)
-	private String email;
-	private String phone;
-	private String password;
-	
-	@OneToMany(mappedBy = "id.user")
-	private Set<Post> Post = new HashSet<>();
+	private String text;
+	private Date date;
 	
 	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 	
-	public User () {
+	public Comment () {
 		}
 
-	public User(Long id, String name, String email, String phone, String password) {
+	public Comment(Long id, String text, Date date) {
 		super();
 		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.password = password;
+		this.text = text;
+		this.date = date;
 	}
 
 	public Long getId() {
@@ -61,36 +52,20 @@ public class User implements UserDetails {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getText() {
+		return text;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setText(String text) {
+		this.text = text;
 	}
 
-	public String getEmail() {
-		return email;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 	
 	public Set<Role> getRoles() {
@@ -113,7 +88,7 @@ public class User implements UserDetails {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User other = (User) obj;
+		Comment other = (Comment) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -125,11 +100,6 @@ public class User implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
 	}
 
 	@Override

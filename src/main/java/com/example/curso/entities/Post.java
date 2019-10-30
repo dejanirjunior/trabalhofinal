@@ -1,5 +1,6 @@
 package com.example.curso.entities;
 
+import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,44 +14,36 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-@Table(name = "tb_user")
-public class User implements UserDetails {
+@Table(name = "tb_post")
+public class Post implements UserDetails {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String name;
-	
-	@Column(unique = true)
-	private String email;
-	private String phone;
-	private String password;
-	
-	@OneToMany(mappedBy = "id.user")
-	private Set<Post> Post = new HashSet<>();
+	private String title;
+	private Instant instante;
+	private String body;
 	
 	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 	
-	public User () {
+	public Post () {
 		}
 
-	public User(Long id, String name, String email, String phone, String password) {
+	public Post(Long id, String title, Instant instante, String body) {
 		super();
 		this.id = id;
-		this.name = name;
-		this.email = email;
-		this.phone = phone;
-		this.password = password;
+		this.title = title;
+		this.instante = instante;
+		this.body = body;
 	}
 
 	public Long getId() {
@@ -61,36 +54,28 @@ public class User implements UserDetails {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	public String getEmail() {
-		return email;
+	public Instant getInstante() {
+		return instante;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setInstante(Instant instante) {
+		this.instante = instante;
 	}
 
-	public String getPhone() {
-		return phone;
+	public String getBody() {
+		return body;
 	}
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
+	public void setPassword(String body) {
+		this.body = body;
 	}
 	
 	public Set<Role> getRoles() {
@@ -113,7 +98,7 @@ public class User implements UserDetails {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User other = (User) obj;
+		Post other = (Post) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -125,11 +110,6 @@ public class User implements UserDetails {
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return roles;
-	}
-
-	@Override
-	public String getUsername() {
-		return email;
 	}
 
 	@Override
