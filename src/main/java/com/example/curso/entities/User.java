@@ -34,8 +34,8 @@ public class User implements UserDetails {
 	private String phone;
 	private String password;
 	
-	@OneToMany(mappedBy = "id.user")
-	private Set<Post> Post = new HashSet<>();
+	@OneToMany(mappedBy = "user")
+	private Set<Post> post = new HashSet<>();
 	
 	@ManyToMany( fetch = FetchType.EAGER)
 	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -97,6 +97,10 @@ public class User implements UserDetails {
 		return roles;
 	}
 	
+	public Set<Post> getPost() {
+		return post;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

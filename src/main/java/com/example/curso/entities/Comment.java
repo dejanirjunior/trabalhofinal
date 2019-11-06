@@ -1,47 +1,45 @@
 package com.example.curso.entities;
 
+import java.io.Serializable;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "tb_comment")
-public class Comment implements UserDetails {
+public class Comment implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String text;
-	private Date date;
-	
-	@ManyToMany( fetch = FetchType.EAGER)
-	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	private Set<Role> roles = new HashSet<>();
-	
-	public Comment () {
-		}
+	private Instant instante;
 
-	public Comment(Long id, String text, Date date) {
+	@ManyToOne
+	@JoinColumn(name = "post_id")
+	private Post post;
+
+	@ManyToOne
+	@JoinColumn(name = "author_id")
+	private User author;
+
+	public Comment() {
+	}
+
+	public Comment(Long id, String text, Instant instante, Post post, User author) {
 		super();
 		this.id = id;
 		this.text = text;
-		this.date = date;
+		this.instante = instante;
+		this.post = post;
+		this.author = author;
 	}
 
 	public Long getId() {
@@ -60,18 +58,30 @@ public class Comment implements UserDetails {
 		this.text = text;
 	}
 
-	public Date getDate() {
-		return date;
+	public Instant getInstante() {
+		return instante;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setInstante(Instant instante) {
+		this.instante = instante;
 	}
-	
-	public Set<Role> getRoles() {
-		return roles;
+
+	public Post getPost() {
+		return post;
 	}
-	
+
+	public void setPost(Post post) {
+		this.post = post;
+	}
+
+	public User getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -97,38 +107,4 @@ public class Comment implements UserDetails {
 		return true;
 	}
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return roles;
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return true;
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-	
-	public boolean hasRole(String roleName) {
-		for (Role role : roles) {
-			if (role.getAuthority().equals(roleName)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 }
