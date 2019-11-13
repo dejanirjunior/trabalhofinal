@@ -9,14 +9,12 @@ import org.hibernate.validator.constraints.Length;
 
 import com.example.curso.entities.Post;
 import com.example.curso.entities.User;
-import com.example.curso.services.validation.UserUpdateValid;
 
-@UserUpdateValid
 public class PostDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private Long id;
-	private Instant instante = Instant.now();
+	private Instant instante;
 	
 	@NotEmpty(message = "can't be empty")
 	@Length(min = 5, max = 80, message = "length must be between 5 and 80")
@@ -25,30 +23,20 @@ public class PostDTO implements Serializable {
 	@NotEmpty(message = "can't be empty")
 	private String body;
 	
-	@NotEmpty(message = "can't be empty")
-	private String phone;
-		
-	private String name;
-	
+	private String author;
+	private Long authorId;
+				
 	public PostDTO() {
 		
 	}
 
-	public PostDTO(Long id, String title, String body, String name) {
-		super();
-		this.id = id;
-		this.title = title;
-		this.body = body;
-		this.name = name;
-	}
-	
 	public PostDTO(Post entity) {
 		this.id = entity.getId();
+		this.instante = entity.getInstante();
 		this.title = entity.getTitle();
 		this.body = entity.getBody();
-		this.instante = entity.getInstante();
-		this.name = entity.getName();
-			
+		this.author = entity.getAuthor().getName();
+		this.authorId = entity.getAuthor().getId();
 	}
 
 	public Long getId() {
@@ -59,12 +47,12 @@ public class PostDTO implements Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Instant getInstante() {
+		return instante;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setInstante(Instant instante) {
+		this.instante = instante;
 	}
 
 	public String getTitle() {
@@ -82,9 +70,27 @@ public class PostDTO implements Serializable {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
-	public Post toEntity() {
-		return new Post(id, title, body, name);
+
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
+	public Long getAuthorId() {
+		return authorId;
+	}
+
+	public void setAuthorId(Long authorId) {
+		this.authorId = authorId;
 	}
 	
+	public Post toEntity() {
+		User userAuthor = new User(authorId, author, null, null, null);
+		return new Post(id, title, instante, body, userAuthor);
+	}
 }
+
+

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.curso.dto.PostDTO;
-import com.example.curso.dto.PostInsertDTO;
 import com.example.curso.services.PostService;
 
 @RestController
@@ -44,7 +43,7 @@ public class PostResource {
 	}
 	
 	@PostMapping
-	public ResponseEntity<PostDTO> insert(@Valid @RequestBody PostInsertDTO dto) {
+	public ResponseEntity<PostDTO> insert(@Valid @RequestBody PostDTO dto) {
 		PostDTO newDto =  service.insert(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
 				.buildAndExpand(newDto.getId()).toUri();

@@ -1,31 +1,31 @@
 package com.example.curso.services;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.core.userdetails.PostDetails;
-import org.springframework.security.core.userdetails.PostDetailsService;
-import org.springframework.security.core.userdetails.PostnameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.curso.dto.PostDTO;
-import com.example.curso.dto.PostInsertDTO;
 import com.example.curso.entities.Post;
+import com.example.curso.entities.User;
 import com.example.curso.repositories.PostRepository;
+import com.example.curso.repositories.UserRepository;
 import com.example.curso.services.exceptions.DatabaseException;
 import com.example.curso.services.exceptions.ResourceNotFoundException;
 
 
 @Service
-public class PostService implements PostDetailsService {
+public class PostService {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -35,6 +35,9 @@ public class PostService implements PostDetailsService {
 	
 	@Autowired
 	private AuthService authService;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
 	public List<PostDTO> findAll() {
 	List<Post> list = repository.findAll();
@@ -47,14 +50,7 @@ public class PostService implements PostDetailsService {
 		Post entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
 		return new PostDTO(entity);
 	}
-	
-	public PostDTO insert(PostInsertDTO dto) {
-		Post entity = dto.toEntity();
-		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-		entity = repository.save(entity);
-		return new PostDTO(entity);
-	}
-	
+		
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);
@@ -78,19 +74,29 @@ public class PostService implements PostDetailsService {
 	}
 
 	private void updateData(Post entity, PostDTO dto) {
-		entity.setName(dto.getName());
-		entity.setEmail(dto.getEmail());
-		entity.setPhone(dto.getPhone());
-		
+		entity.setTitle(dto.getTitle());
 	}
 
-	@Override
-	public PostDetails loadPostByPostname(String username) throws PostnameNotFoundException {
-		Post user = repository.findByEmail(username);
-		if (user == null) {
-			throw new PostnameNotFoundException(username);
-		}
-		return user;
+	@Transactional
+	public PostDTO insert(@Valid PostDTO dto) {
+		User author = authService.authenticated();
+		Post post = dto.toEntity();
+		post.setAuthor(author);
+		post.setInstante(Instant.now());
+		post = repository.save(post);
+		return new PostDTO(post);
 	}
+	
+	/*
+	@Transactional
+	public PaymentDTO insert(PaymentDTO dto) {
+		Order order = orderRepository.getOne(dto.getOrderId());
+		Payment payment = new Payment(null, dto.getMoment(), order);
+		order.setPayment(payment);
+		orderRepository.save(order);	
+		return new PaymentDTO(order.getPayment());
+	*/
+	
+	
 	
 }

@@ -34,7 +34,7 @@ public class User implements UserDetails {
 	private String phone;
 	private String password;
 	
-	@OneToMany(mappedBy = "user")
+	@OneToMany(mappedBy = "author")
 	private Set<Post> post = new HashSet<>();
 	
 	@ManyToMany( fetch = FetchType.EAGER)

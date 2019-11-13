@@ -24,19 +24,19 @@ public class Post implements Serializable {
 	private String body;
 
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "author_id")
+	private User author;
 
 	public Post() {
 	}
 
-	public Post(Long id, String title, Instant instante, String body, User user) {
+	public Post(Long id, String title, Instant instante, String body, User author) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.instante = instante;
 		this.body = body;
-		this.user = user;
+		this.author = author;
 	}
 
 	public Long getId() {
@@ -67,12 +67,12 @@ public class Post implements Serializable {
 		return body;
 	}
 
-	public User getUser() {
-		return user;
+	public User getAuthor() {
+		return author;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setAuthor(User author) {
+		this.author = author;
 	}
 
 	@Override
