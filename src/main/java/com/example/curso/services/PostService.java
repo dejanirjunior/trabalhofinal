@@ -8,9 +8,13 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
+import com.example.curso.dto.CommentDTO;
+import com.example.curso.entities.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +54,31 @@ public class PostService {
 		Post entity = obj.orElseThrow(() -> new ResourceNotFoundException(id));
 		return new PostDTO(entity);
 	}
-		
+
+	public Page<PostDTO> findByNamePaged(String name, Pageable pageable) {
+		Page<Post> list;
+
+		list = repository.findByNameContainingIgnoreCase(name, pageable);
+
+		return list.map(e -> new PostDTO(e));
+	}
+
+	public Page<CommentDTO> findCommentsPaged(Long id, Pageable pageable) {
+		Page<Comment> list;
+
+		list = repository.findCommentsContainingIgnoreCase(id, pageable);
+
+		return list.map(e -> new CommentDTO(e));
+	}
+
+	@Transactional(readOnly = true)
+	public Page<PostDTO> findByUserPaged(Long userId, Pageable pageable) {
+		User user = userRepository.getOne(userId);
+		Page<Post> posts = repository.findByUser(user, pageable);
+
+		return posts.map(e -> new PostDTO(e));
+	}
+
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);
@@ -60,6 +88,7 @@ public class PostService {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
+
 	@Transactional
 	public PostDTO update(Long id, PostDTO dto) {
 		authService.validateSelfOrAdmin(id);
