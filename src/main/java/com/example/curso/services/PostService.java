@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
-import com.example.curso.dto.CommentDTO;
-import com.example.curso.entities.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -55,6 +53,7 @@ public class PostService {
 		return new PostDTO(entity);
 	}
 
+	/*
 	public Page<PostDTO> findByNamePaged(String name, Pageable pageable) {
 		Page<Post> list;
 
@@ -79,6 +78,8 @@ public class PostService {
 		return posts.map(e -> new PostDTO(e));
 	}
 
+*/
+	
 	public void delete(Long id) {
 		try {
 			repository.deleteById(id);
@@ -114,6 +115,15 @@ public class PostService {
 		post.setInstante(Instant.now());
 		post = repository.save(post);
 		return new PostDTO(post);
+	}
+
+	public Page<PostDTO> myTimeLine(Pageable pageable) {
+		User author = authService.authenticated();
+		Page<Post> posts = repository.findByAuthor(author, pageable);
+		
+		
+		// TODO Auto-generated method stub
+		return posts.map(e -> new PostDTO(e));
 	}
 	
 	/*

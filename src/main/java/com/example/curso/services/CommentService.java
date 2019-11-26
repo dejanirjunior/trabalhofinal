@@ -1,22 +1,26 @@
 package com.example.curso.services;
 
+import java.time.Instant;
+
+import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.example.curso.dto.CommentDTO;
 import com.example.curso.entities.Comment;
 import com.example.curso.entities.User;
 import com.example.curso.repositories.CommentRepository;
 import com.example.curso.services.exceptions.DatabaseException;
 import com.example.curso.services.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
-import java.time.Instant;
-
+@Service
 public class CommentService {
 
     @Autowired
@@ -37,6 +41,7 @@ public class CommentService {
     }
 
     public void delete(Long id) {
+    	authService.validateSelfOrAdmin(id);
         try {
             repository.deleteById(id);
         } catch (EmptyResultDataAccessException e) {

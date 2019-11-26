@@ -48,7 +48,7 @@ public class CommentResource {
             @RequestParam(value = "text", defaultValue = "") String text,
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "12") Integer linesPerPage,
-            @RequestParam(value = "orderBy", defaultValue = "name") String orderBy,
+            @RequestParam(value = "orderBy", defaultValue = "instante") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
