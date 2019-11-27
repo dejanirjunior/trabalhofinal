@@ -3,6 +3,7 @@ package com.example.curso.services;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -17,7 +18,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.curso.dto.CommentDTO;
 import com.example.curso.dto.PostDTO;
+import com.example.curso.entities.Comment;
 import com.example.curso.entities.Post;
 import com.example.curso.entities.User;
 import com.example.curso.repositories.PostRepository;
@@ -120,22 +123,21 @@ public class PostService {
 	public Page<PostDTO> myTimeLine(Pageable pageable) {
 		User author = authService.authenticated();
 		Page<Post> posts = repository.findByAuthor(author, pageable);
-		
-		
-		// TODO Auto-generated method stub
+		return posts.map(e -> new PostDTO(e));
+	}
+
+	public Page<PostDTO> timeLine(Long userId, Pageable pageable) {
+		User author = userRepository.getOne(userId);
+		Page<Post> posts = repository.findByAuthor(author, pageable);
 		return posts.map(e -> new PostDTO(e));
 	}
 	
-	/*
-	@Transactional
-	public PaymentDTO insert(PaymentDTO dto) {
-		Order order = orderRepository.getOne(dto.getOrderId());
-		Payment payment = new Payment(null, dto.getMoment(), order);
-		order.setPayment(payment);
-		orderRepository.save(order);	
-		return new PaymentDTO(order.getPayment());
-	*/
-	
+	@Transactional(readOnly = true)
+	public List<CommentDTO> findComment(Long id) {
+		Post post = repository.getOne(id);
+		Set<Comment> set = post.getComments();
+		return set.stream().map(e -> new CommentDTO(e)).collect(Collectors.toList());
+	}
 	
 	
 }
