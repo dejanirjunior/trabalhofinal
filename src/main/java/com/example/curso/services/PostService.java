@@ -82,7 +82,9 @@ public class PostService {
 
 	private void updateData(Post entity, PostDTO dto) {
 		entity.setTitle(dto.getTitle());
+		entity.setBody(dto.getBody());
 	}
+		
 
 	@Transactional
 	public PostDTO insert(@Valid PostDTO dto) {
