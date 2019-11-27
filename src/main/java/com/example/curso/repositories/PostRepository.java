@@ -16,5 +16,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT obj FROM Post obj WHERE obj.author = :author")
 	Page<Post> findByAuthor(@Param("author") User author, Pageable pageable);
 
-   
+ 
+    @Transactional(readOnly = true)
+    @Query("SELECT obj FROM Post obj WHERE LOWER(obj.body) LIKE LOWER(CONCAT('%',:body,'%'))")
+    Page<Post> findByBodyContainingIgnoreCase(String body, Pageable pageable);
 }

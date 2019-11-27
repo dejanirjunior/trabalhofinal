@@ -56,32 +56,6 @@ public class PostService {
 		return new PostDTO(entity);
 	}
 
-	/*
-	public Page<PostDTO> findByNamePaged(String name, Pageable pageable) {
-		Page<Post> list;
-
-		list = repository.findByNameContainingIgnoreCase(name, pageable);
-
-		return list.map(e -> new PostDTO(e));
-	}
-
-	public Page<CommentDTO> findCommentsPaged(Long id, Pageable pageable) {
-		Page<Comment> list;
-
-		list = repository.findCommentsContainingIgnoreCase(id, pageable);
-
-		return list.map(e -> new CommentDTO(e));
-	}
-
-	@Transactional(readOnly = true)
-	public Page<PostDTO> findByUserPaged(Long userId, Pageable pageable) {
-		User user = userRepository.getOne(userId);
-		Page<Post> posts = repository.findByUser(user, pageable);
-
-		return posts.map(e -> new PostDTO(e));
-	}
-
-*/
 	
 	public void delete(Long id) {
 		try {
@@ -139,5 +113,9 @@ public class PostService {
 		return set.stream().map(e -> new CommentDTO(e)).collect(Collectors.toList());
 	}
 	
-	
+    public Page<PostDTO> findByBodyPaged(String body, Pageable pageable) {
+        Page<Post> list;
+        list = repository.findByBodyContainingIgnoreCase(body, pageable);
+        return list.map(e -> new PostDTO(e));
+    }
 }
