@@ -32,6 +32,10 @@ public class CommentDTO implements Serializable {
         this.postId = entity.getPost().getId();
     }
 
+    public CommentDTO() {
+    	
+    }
+    
     public Long getId() {
         return id;
     }

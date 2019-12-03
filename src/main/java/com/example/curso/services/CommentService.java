@@ -66,6 +66,7 @@ public class CommentService {
 
     private void updateData(Comment entity, CommentDTO dto) {
         entity.setText(dto.getText());
+        entity.setInstante(Instant.now());
     }
 
     public Page<CommentDTO> findByTextPaged(String text, Pageable pageable) {
